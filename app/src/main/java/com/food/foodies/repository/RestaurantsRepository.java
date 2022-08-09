@@ -54,8 +54,8 @@ public class RestaurantsRepository {
 
         CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-        compositeDisposable.add(restaurantObservable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(restaurantObservable.observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
                 .map(result -> result)
                 .subscribe(this::handleResults, this::handleError));
     }
@@ -64,9 +64,15 @@ public class RestaurantsRepository {
     private void handleResults(RestaurantsResponse response) {
         if (response != null && response.getBusinesses().size() != 0) {
             try {
+
+                Log.d(LogTags.RETROFIT_CALL, "handleResults: "+response.toString());
                 restaurantLiveData.setValue(response);
+                loadingState.setValue(false);
+                errorState.setValue(false);
             } catch (Exception e) {
                 Log.e(LogTags.RETROFIT_CALL, "handleResults ERROR: ", e);
+                loadingState.setValue(false);
+                errorState.setValue(true);
             }
 
         } else {
@@ -80,6 +86,8 @@ public class RestaurantsRepository {
     //here we are handling the errors
     private void handleError(Throwable t) {
         restaurantLiveData.setValue(null);
+        loadingState.setValue(false);
+        errorState.setValue(true);
         Log.e(LogTags.RETROFIT_CALL, "ERROR IN FETCHING API RESPONSE. Try again", t);
         Toast.makeText(application, "Something went wrong! \nReason: " + t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
     }
@@ -89,4 +97,12 @@ public class RestaurantsRepository {
         return restaurantLiveData;
     }
 
+
+    public MutableLiveData<Boolean> getLoadingState() {
+        return loadingState;
+    }
+
+    public MutableLiveData<Boolean> getErrorState() {
+        return errorState;
+    }
 }

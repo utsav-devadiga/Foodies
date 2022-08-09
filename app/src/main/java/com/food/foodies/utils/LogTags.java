@@ -7,4 +7,5 @@ package com.food.foodies.utils;
 
 public class LogTags {
     public static String RETROFIT_CALL = "RETROFIT-CALL";
+    public static String HOME_FRAGMENT = "HOME-FRAGMENT";
 }

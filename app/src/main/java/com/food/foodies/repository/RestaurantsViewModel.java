@@ -28,4 +28,8 @@ public class RestaurantsViewModel extends AndroidViewModel {
     public LiveData<RestaurantsResponse> getRestaurantData() {
         return restaurantsRepository.getRestaurantData();
     }
+
+    public LiveData<Boolean> getLoadingState() {
+        return restaurantsRepository.getLoadingState();
+    }
 }

@@ -8,7 +8,7 @@ import retrofit2.http.Query;
 
 public interface ApiClient {
 
-    @GET("/search")
+    @GET("v3/businesses/search")
     Observable<RestaurantsResponse> getRestaurants(@Query("term") String term,
                                                    @Query("location") String location,
                                                    @Query("radius") int radius,

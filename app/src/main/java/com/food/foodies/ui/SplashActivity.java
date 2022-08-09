@@ -2,7 +2,9 @@ package com.food.foodies.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -29,6 +31,31 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(view);
 
         //asking permissions for locations
+
+        //wait till the animation ends
+        binding.splashAnimation.addAnimatorListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                //going to home screen after the animation ends
+                Intent homeIntent = new Intent(SplashActivity.this, HomeActivity.class);
+                startActivity(homeIntent);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
 
 
     }
