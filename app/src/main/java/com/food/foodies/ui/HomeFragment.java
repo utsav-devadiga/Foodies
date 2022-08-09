@@ -2,9 +2,12 @@ package com.food.foodies.ui;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +19,7 @@ import com.food.foodies.repository.RestaurantsViewModel;
 import com.food.foodies.responseclasses.RestaurantsResponse;
 import com.food.foodies.ui.adapters.RestaurantAdapter;
 import com.food.foodies.utils.LogTags;
+import com.google.android.material.slider.Slider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +69,12 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         view = binding.getRoot();
 
+        //setting the slider to max
+        binding.slider.setValue(40000);
+
+        //setting the place edit text
+        binding.placeEditText.setText("NYC");
+
         //initializing the view-model for the fragment lifecycle but with the activity scope.
         restaurantsViewModel = new ViewModelProvider(requireActivity()).get(RestaurantsViewModel.class);
 
@@ -78,13 +88,55 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        //slider
+        binding.slider.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
+            @Override
+            public void onStartTrackingTouch(@NonNull Slider slider) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(@NonNull Slider slider) {
+                //get the location
+                String location = binding.placeEditText.getText().toString().trim().isEmpty() ? "NYC" : binding.placeEditText.getText().toString().trim();
+                //here we respond to users radius
+                restaurantsViewModel.getRestaurants(location, Math.round(slider.getValue()));
+
+                if (binding.placeEditText.getText().toString().trim().isEmpty()) {
+                    binding.placeEditText.setText("NYC");
+                }
+            }
+        });
+
+        //place text
+      /*  binding.placeEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.toString().isEmpty()) {
+                    //no location
+                } else {
+                    restaurantsViewModel.getRestaurants(charSequence.toString(), Math.round(binding.slider.getValue()));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        }); */ //removed for api bad behaviour
+
         return view;
     }
 
     private void hideLoading() {
         //loading
         binding.loadingAnimation.pauseAnimation();
-        binding.loadingAnimation.setVisibility(View.GONE);
+        binding.loadingLayout.setVisibility(View.GONE);
 
         //recyclerview
         binding.restaurantCycle.setVisibility(View.VISIBLE);
@@ -93,7 +145,7 @@ public class HomeFragment extends Fragment {
     private void showLoading() {
         //loading
         binding.loadingAnimation.playAnimation();
-        binding.loadingAnimation.setVisibility(View.VISIBLE);
+        binding.loadingLayout.setVisibility(View.VISIBLE);
 
         //recyclerview
         binding.restaurantCycle.setVisibility(View.GONE);
