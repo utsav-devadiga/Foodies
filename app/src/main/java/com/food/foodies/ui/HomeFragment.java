@@ -1,5 +1,6 @@
 package com.food.foodies.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,9 +10,13 @@ import androidx.lifecycle.ViewModelProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.food.foodies.databinding.FragmentHomeBinding;
 import com.food.foodies.repository.RestaurantsViewModel;
@@ -88,6 +93,15 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        //showing the error
+        restaurantsViewModel.getErrorState().observe(getViewLifecycleOwner(), error -> {
+            if (error) {
+                showError();
+            } else {
+                hideError();
+            }
+        });
+
         //slider
         binding.slider.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
             @Override
@@ -105,6 +119,20 @@ public class HomeFragment extends Fragment {
                 if (binding.placeEditText.getText().toString().trim().isEmpty()) {
                     binding.placeEditText.setText("NYC");
                 }
+            }
+        });
+
+        binding.placeEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    if (!textView.getText().toString().isEmpty()) {
+                        restaurantsViewModel.getRestaurants(textView.getText().toString(), Math.round(binding.slider.getValue()));
+                        closeKeyboard();
+                    }
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -130,7 +158,31 @@ public class HomeFragment extends Fragment {
             }
         }); */ //removed for api bad behaviour
 
+
         return view;
+    }
+
+    private void closeKeyboard() {
+        // this will give us the view
+        // which is currently focus
+        // in this layout
+        View view = requireActivity().getCurrentFocus();
+
+        // if nothing is currently
+        // focus then this will protect
+        // the app from crash
+        if (view != null) {
+
+            // now assign the system
+            // service to InputMethodManager
+            InputMethodManager manager
+                    = (InputMethodManager)
+                    requireActivity().getSystemService(
+                            Context.INPUT_METHOD_SERVICE);
+            manager
+                    .hideSoftInputFromWindow(
+                            view.getWindowToken(), 0);
+        }
     }
 
     private void hideLoading() {
@@ -145,7 +197,27 @@ public class HomeFragment extends Fragment {
     private void showLoading() {
         //loading
         binding.loadingAnimation.playAnimation();
+        binding.errorLayout.setVisibility(View.GONE);
         binding.loadingLayout.setVisibility(View.VISIBLE);
+
+        //recyclerview
+        binding.restaurantCycle.setVisibility(View.GONE);
+    }
+
+    private void hideError() {
+        //loading
+        binding.errorAnimation.pauseAnimation();
+        binding.errorLayout.setVisibility(View.GONE);
+
+        //recyclerview
+        binding.restaurantCycle.setVisibility(View.VISIBLE);
+    }
+
+    private void showError() {
+        //loading
+        binding.errorAnimation.playAnimation();
+        binding.errorLayout.setVisibility(View.VISIBLE);
+        binding.loadingLayout.setVisibility(View.GONE);
 
         //recyclerview
         binding.restaurantCycle.setVisibility(View.GONE);

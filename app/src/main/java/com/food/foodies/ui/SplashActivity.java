@@ -44,6 +44,7 @@ public class SplashActivity extends AppCompatActivity {
                 //going to home screen after the animation ends
                 Intent homeIntent = new Intent(SplashActivity.this, HomeActivity.class);
                 startActivity(homeIntent);
+                finish();
             }
 
             @Override

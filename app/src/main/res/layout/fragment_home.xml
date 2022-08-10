@@ -16,6 +16,7 @@
         android:textStyle="bold" />
 
     <EditText
+        android:maxLines="1"
         android:id="@+id/place_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,7 +24,10 @@
         android:layout_marginHorizontal="12dp"
         android:gravity="center"
         android:hint="Enter the place name"
-        android:padding="12dp" />
+        android:padding="12dp"
+        android:inputType="text"
+        android:singleLine="true"
+        android:imeOptions="actionSearch"/>
 
     <TextView
         android:id="@+id/slider_header"
@@ -74,6 +78,39 @@
                 android:layout_marginBottom="50dp"
                 android:gravity="center"
                 android:text="LOADING..."
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/error_layout"
+        android:layout_width="310dp"
+        android:layout_height="310dp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="12dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/error_animation"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_centerInParent="true"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="false"
+                app:lottie_rawRes="@raw/food_oops" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/error_animation"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="50dp"
+                android:gravity="center"
                 android:textStyle="bold" />
         </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
